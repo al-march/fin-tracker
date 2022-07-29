@@ -18,6 +18,7 @@ func Init() {
 	if err = db.AutoMigrate(
 		&models.User{},
 		&models.Category{},
+		&models.Transaction{},
 	); err != nil {
 		log.Fatal("error while auto migrate running", err)
 	}
