@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fin-tracker/config"
 	"fin-tracker/db/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -10,7 +11,7 @@ import (
 var DB *gorm.DB
 
 func Init() {
-	db, err := gorm.Open(sqlite.Open("fin-tracker.test.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(config.Data.DbName), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}

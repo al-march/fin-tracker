@@ -1,4 +1,5 @@
 .idea
 
-
+config.yaml
 fin-tracker.test.db
+tracker.dev.db
