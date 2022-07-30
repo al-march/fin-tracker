@@ -9,7 +9,8 @@ import (
 var Data = config{}
 
 type config struct {
-	DbName string `yaml:"db_name"`
+	DbName    string `yaml:"db_name"`
+	JwtSecret string `yaml:"jwt_secret"`
 }
 
 func (c *config) Init() *config {
