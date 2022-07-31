@@ -3,6 +3,8 @@ package main
 import (
 	"fin-tracker/config"
 	"fin-tracker/db"
+	"fin-tracker/rest"
+	"fin-tracker/rest/category"
 	"fin-tracker/rest/user"
 	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v3"
@@ -26,11 +28,22 @@ func main() {
 		},
 	}))
 
-	userController := user.Controller{App: app}
-	userController.Init()
+	initControllers(app)
 
 	err := app.Listen(":8080")
 	if err != nil {
 		return
 	}
+}
+
+func initControllers(app *fiber.App) {
+	c := rest.BaseController{App: app}
+
+	userController := user.Controller{App: app}
+	categoryController := category.Controller{
+		BaseController: c,
+	}
+
+	userController.Init()
+	categoryController.Init()
 }
