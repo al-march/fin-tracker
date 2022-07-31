@@ -6,6 +6,7 @@ import (
 	"fin-tracker/config"
 	"fin-tracker/db"
 	"fin-tracker/db/models"
+	"fin-tracker/rest"
 	"fin-tracker/rest/handler"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
@@ -20,7 +21,7 @@ var (
 )
 
 type Controller struct {
-	App *fiber.App
+	rest.BaseController
 }
 
 func (c Controller) Init() {

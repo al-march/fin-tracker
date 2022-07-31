@@ -39,11 +39,9 @@ func main() {
 func initControllers(app *fiber.App) {
 	c := rest.BaseController{App: app}
 
-	userController := user.Controller{App: app}
-	categoryController := category.Controller{
-		BaseController: c,
-	}
+	userC := user.Controller{BaseController: c}
+	catC := category.Controller{BaseController: c}
 
-	userController.Init()
-	categoryController.Init()
+	userC.Init()
+	catC.Init()
 }
