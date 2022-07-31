@@ -13,7 +13,7 @@ type Controller struct {
 	rest.BaseController
 }
 
-func (c Controller) Init() {
+func (c Controller) Run() {
 	c.getAll()
 }
 
