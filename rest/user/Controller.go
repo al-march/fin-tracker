@@ -7,7 +7,6 @@ import (
 	"fin-tracker/db"
 	"fin-tracker/db/models"
 	"fin-tracker/rest"
-	"fin-tracker/rest/handler"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -41,12 +40,12 @@ func (c Controller) signUp() {
 		var request Registration
 		err := ctx.BodyParser(&request)
 		if err != nil {
-			err := handler.ErrorInvalidRequest
+			err := rest.ErrorInvalidRequest
 			return ctx.Status(err.Status).JSON(err)
 		}
 
 		if len(request.Login) == 0 {
-			err := handler.Error{
+			err := rest.Error{
 				Message: "login is required field",
 				Status:  fiber.StatusBadRequest,
 			}
@@ -60,7 +59,7 @@ func (c Controller) signUp() {
 		).First(&user)
 
 		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			err := handler.ErrorAlreadyExist
+			err := rest.ErrorAlreadyExist
 			return ctx.Status(err.Status).JSON(err)
 		}
 
@@ -84,7 +83,7 @@ func (c Controller) signIn() {
 		var request Login
 		err := ctx.BodyParser(&request)
 		if err != nil {
-			err := handler.ErrorInvalidRequest
+			err := rest.ErrorInvalidRequest
 			return ctx.Status(err.Status).JSON(err)
 		}
 
@@ -94,12 +93,12 @@ func (c Controller) signIn() {
 		).First(&user)
 
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			err := handler.ErrorUserNotFound
+			err := rest.ErrorUserNotFound
 			return ctx.Status(err.Status).JSON(err)
 		}
 
 		if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
-			err := handler.ErrorInvalidUserLogin
+			err := rest.ErrorInvalidUserLogin
 			return ctx.Status(err.Status).JSON(err)
 		}
 
@@ -108,7 +107,7 @@ func (c Controller) signIn() {
 
 		t, err := token.SignedString([]byte(config.Data.JwtSecret))
 		if err != nil {
-			err := handler.ErrorServerInternal
+			err := rest.ErrorServerInternal
 			return ctx.Status(err.Status).JSON(err)
 		}
 
@@ -126,7 +125,7 @@ func (c Controller) info() {
 		var user models.User
 		err := db.DB.Where("id = ?", u.ID).First(&user).Error
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			err := handler.ErrorServerInternal
+			err := rest.ErrorServerInternal
 			return ctx.Status(err.Status).JSON(err)
 		}
 
