@@ -22,6 +22,7 @@ type createRequest struct {
 
 func (c Controller) Run() {
 	c.create()
+	c.update()
 	c.getAll()
 	c.getOne()
 }
@@ -74,7 +75,7 @@ func (c Controller) getAll() {
 }
 
 func (c Controller) getOne() {
-	c.Get("/one/:id", func(ctx *fiber.Ctx) error {
+	c.Get("/:id", func(ctx *fiber.Ctx) error {
 		user := auth.TakeUser(ctx)
 		id := ctx.Params("id", "-1")
 
@@ -91,5 +92,40 @@ func (c Controller) getOne() {
 		}
 
 		return ctx.JSON(tran)
+	})
+}
+
+func (c Controller) update() {
+	c.Put("/:id", func(ctx *fiber.Ctx) error {
+		user := auth.TakeUser(ctx)
+		id := ctx.Params("id", "-1")
+		var req createRequest
+		if err := ctx.BodyParser(&req); err != nil {
+			err := rest.ErrorInvalidRequest
+			return ctx.Status(err.Status).JSON(err)
+		}
+
+		var entity models.Transaction
+		err := db.DB.
+			Where("id=? AND user_id=?", id, user.ID).
+			First(&entity).
+			Error
+
+		if err != nil {
+			err := rest.ErrorEntityNotFound
+			return ctx.Status(err.Status).JSON(err)
+		}
+
+		entity.Sum = req.Sum
+		entity.Date = req.Date
+		entity.Description = req.Description
+		entity.Category = req.Category
+		db.DB.Save(&entity)
+
+		var cat models.Category
+		db.DB.Where("id=?", req.Category.ID).First(&cat)
+		entity.Category = cat
+
+		return ctx.JSON(entity)
 	})
 }

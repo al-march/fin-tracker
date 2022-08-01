@@ -69,6 +69,20 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 ###
-GET http://127.0.0.1:8080/api/v1/transaction/one/1
+GET http://127.0.0.1:8080/api/v1/transaction/1
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
+
+###
+PUT http://127.0.0.1:8080/api/v1/transaction/1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "sum": 890,
+  "description": "Еда в перекрестке",
+  "category": {
+    "id": 1
+  },
+  "date": "2022-07-31T23:50:01.274Z"
+}
