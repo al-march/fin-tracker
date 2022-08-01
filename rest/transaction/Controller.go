@@ -23,6 +23,7 @@ type createRequest struct {
 func (c Controller) Run() {
 	c.create()
 	c.update()
+	c.delete()
 	c.getAll()
 	c.getOne()
 }
@@ -127,5 +128,25 @@ func (c Controller) update() {
 		entity.Category = cat
 
 		return ctx.JSON(entity)
+	})
+}
+
+func (c Controller) delete() {
+	c.Delete("/:id", func(ctx *fiber.Ctx) error {
+		user := auth.TakeUser(ctx)
+		id := ctx.Params("id", "-1")
+
+		var entity models.Transaction
+		err := db.DB.
+			Where("id=? AND user_id=?", id, user.ID).
+			First(&entity).
+			Error
+		if err != nil {
+			err := rest.ErrorEntityNotFound
+			return ctx.Status(err.Status).JSON(err)
+		}
+
+		db.DB.Delete(&entity)
+		return ctx.SendStatus(fiber.StatusOK)
 	})
 }

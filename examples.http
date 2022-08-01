@@ -55,10 +55,10 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "sum": 890,
-  "description": "оно",
+  "sum": 8903,
+  "description": "на удаление",
   "category": {
-    "id": 1
+    "id": 6
   },
   "date": "2022-07-31T23:50:01.274Z"
 }
@@ -69,7 +69,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 ###
-GET http://127.0.0.1:8080/api/v1/transaction/1
+GET http://127.0.0.1:8080/api/v1/transaction/2
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
@@ -86,3 +86,8 @@ Authorization: Bearer {{auth_token}}
   },
   "date": "2022-07-31T23:50:01.274Z"
 }
+
+###
+DELETE http://127.0.0.1:8080/api/v1/transaction/2
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
