@@ -18,6 +18,7 @@ func Init() {
 
 	if err = db.AutoMigrate(
 		&models.User{},
+		&models.Settings{},
 		&models.Category{},
 		&models.Transaction{},
 	); err != nil {

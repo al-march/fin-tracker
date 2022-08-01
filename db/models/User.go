@@ -16,4 +16,6 @@ type User struct {
 	Firstname string `json:"firstname"`
 	Surname   string `json:"surname"`
 	Password  string `json:"-"`
+
+	Settings Settings `json:"settings"`
 }

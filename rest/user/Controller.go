@@ -129,6 +129,10 @@ func (c Controller) info() {
 			return ctx.Status(err.Status).JSON(err)
 		}
 
+		var settings models.Settings
+		db.DB.FirstOrCreate(&settings, models.Settings{UserID: user.ID})
+		user.Settings = settings
+
 		return ctx.JSON(user)
 	})
 }
@@ -139,4 +143,13 @@ func getHash(p string) string {
 		log.Println(err)
 	}
 	return string(hash)
+}
+
+func (c Controller) getUserSettings(userID uint) models.Settings {
+	var settings models.Settings
+	db.DB.
+		Model(models.Settings{}).
+		Where("user_id=?", userID).
+		FirstOrCreate(&settings)
+	return settings
 }
