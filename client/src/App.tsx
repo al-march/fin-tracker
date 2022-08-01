@@ -9,6 +9,12 @@ const App: Component = () => {
       style={{height: isSafari ? '-webkit-fill-available' : '100vh'}}
       class="main"
     >
+      <header class="navbar bg-base-200">
+        <div class="flex-1">
+          <a class="btn btn-ghost normal-case text-xl">daisyUI</a>
+        </div>
+      </header>
+
       <section class="overflow-hidden">
         <Routing/>
       </section>
