@@ -15,8 +15,7 @@ import (
 )
 
 var (
-	publicPath  = "api/v1/auth"
-	privatePath = "api/v1/profile"
+	publicPath = "api/v1/auth"
 )
 
 type Controller struct {
@@ -27,6 +26,8 @@ func (c Controller) Run() {
 	c.signUp()
 	c.signIn()
 	c.info()
+	// Settings
+	c.updateSettings()
 }
 
 func (c Controller) signUp() {
@@ -119,7 +120,7 @@ func (c Controller) signIn() {
 }
 
 func (c Controller) info() {
-	c.App.Get(privatePath+"/info", func(ctx *fiber.Ctx) error {
+	c.Get("/info", func(ctx *fiber.Ctx) error {
 		u := auth.TakeUser(ctx)
 
 		var user models.User
@@ -145,11 +146,25 @@ func getHash(p string) string {
 	return string(hash)
 }
 
-func (c Controller) getUserSettings(userID uint) models.Settings {
-	var settings models.Settings
-	db.DB.
-		Model(models.Settings{}).
-		Where("user_id=?", userID).
-		FirstOrCreate(&settings)
-	return settings
+func (c Controller) updateSettings() {
+	c.Put("/settings", func(ctx *fiber.Ctx) error {
+		user := auth.TakeUser(ctx)
+
+		var req models.Settings
+		if err := ctx.BodyParser(&req); err != nil {
+			err := rest.ErrorInvalidRequest
+			return ctx.Status(err.Status).JSON(err)
+		}
+
+		var settings models.Settings
+		db.DB.
+			Where("user_id=?", user.ID).
+			FirstOrCreate(&settings)
+
+		settings.MonthOutcome = req.MonthOutcome
+		settings.MonthIncome = req.MonthIncome
+
+		db.DB.Save(&settings)
+		return ctx.JSON(settings)
+	})
 }

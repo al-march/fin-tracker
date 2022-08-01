@@ -40,7 +40,7 @@ func main() {
 func runHandlers(app *fiber.App) {
 	userController := user.Controller{BaseController: rest.BaseController{
 		App:      app,
-		Endpoint: "user",
+		Endpoint: "profile",
 	}}
 	userController.Run()
 
