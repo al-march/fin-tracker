@@ -14,21 +14,23 @@ type Controller struct {
 }
 
 type createRequest struct {
-	Sum         float32   `json:"sum"`
-	Description string    `json:"description"`
-	CategoryID  uint      `json:"categoryId"`
-	Date        time.Time `json:"date"`
+	Sum         float32         `json:"sum"`
+	Description string          `json:"description"`
+	Category    models.Category `json:"category"`
+	Date        time.Time       `json:"date"`
 }
 
 func (c Controller) Run() {
 	c.create()
+	c.getAll()
+	c.getOne()
 }
 
 func (c Controller) create() {
 	c.Post("", func(ctx *fiber.Ctx) error {
 		user := auth.TakeUser(ctx)
-		req := createRequest{}
 
+		var req createRequest
 		if err := ctx.BodyParser(&req); err != nil {
 			err := rest.ErrorInvalidRequest
 			return ctx.Status(err.Status).JSON(err)
@@ -45,11 +47,49 @@ func (c Controller) create() {
 			UserID:      user.ID,
 			Sum:         req.Sum,
 			Description: req.Description,
-			CategoryID:  req.CategoryID,
+			CategoryID:  req.Category.ID,
 			Date:        date,
 		}
 
 		db.DB.Save(&entity)
+
+		var cat models.Category
+		db.DB.Where("id=?", req.Category.ID).First(&cat)
+		entity.Category = cat
+
 		return ctx.JSON(entity)
+	})
+}
+
+func (c Controller) getAll() {
+	c.Get("", func(ctx *fiber.Ctx) error {
+		user := auth.TakeUser(ctx)
+		trans := make([]models.Transaction, 0)
+		db.DB.
+			Where("user_id=?", user.ID).
+			Preload("Category").
+			Find(&trans)
+		return ctx.JSON(trans)
+	})
+}
+
+func (c Controller) getOne() {
+	c.Get("/one/:id", func(ctx *fiber.Ctx) error {
+		user := auth.TakeUser(ctx)
+		id := ctx.Params("id", "-1")
+
+		var tran models.Transaction
+		err := db.DB.
+			Where("id=? AND user_id=?", id, user.ID).
+			Preload("Category").
+			First(&tran).
+			Error
+
+		if err != nil {
+			err := rest.ErrorEntityNotFound
+			return ctx.Status(err.Status).JSON(err)
+		}
+
+		return ctx.JSON(tran)
 	})
 }
