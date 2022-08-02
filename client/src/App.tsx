@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js';
 import { Routing } from './Routing';
-import { Header } from '@app/template';
+import { Drawer, Header } from '@app/template';
 
 const App: Component = () => {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -12,9 +12,11 @@ const App: Component = () => {
     >
       <Header/>
 
-      <section class="overflow-hidden">
-        <Routing/>
-      </section>
+      <Drawer>
+        <section class="overflow-hidden">
+          <Routing/>
+        </section>
+      </Drawer>
     </main>
   );
 };
