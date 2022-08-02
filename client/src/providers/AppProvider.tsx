@@ -4,9 +4,11 @@ import { createContext, ParentProps, useContext } from 'solid-js';
 import { appStorage } from '@app/services/storage';
 
 export type Theme = 'light' | 'business';
+export type DrawerState = 'full' | 'min';
 
 export type AppState = {
   user: UserDto | undefined;
+  drawer: DrawerState;
   isLogin: boolean;
   theme: Theme;
   token: string;
@@ -21,6 +23,7 @@ type AppContextType = {
   setUser: (dto: UserDto) => void;
   setLoading: (state: boolean) => void;
   setHeaderHeight: (value: number) => void;
+  setDrawer: (state: DrawerState) => void;
 }
 
 export const AppContext = createContext<AppContextType>();
@@ -32,6 +35,7 @@ export const AppProvider = (props: ParentProps) => {
     user: undefined,
     loading: false,
     headerHeight: 0,
+    drawer: 'full',
 
     get isLogin() {
       return !!this.user;
@@ -63,7 +67,11 @@ export const AppProvider = (props: ParentProps) => {
 
   const setHeaderHeight = (value: number) => {
     setState('headerHeight', value);
-  }
+  };
+
+  const setDrawer = (state: DrawerState) => {
+    setState('drawer', state);
+  };
 
   return (
     <AppContext.Provider value={{
@@ -72,7 +80,8 @@ export const AppProvider = (props: ParentProps) => {
       setAuth,
       setUser,
       setLoading,
-      setHeaderHeight
+      setHeaderHeight,
+      setDrawer
     }}>
       {props.children}
     </AppContext.Provider>

@@ -1,6 +1,8 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@fortawesome/fontawesome-free': ^6.1.2
+  '@types/node': ^18.6.3
   autoprefixer: ^10.4.7
   daisyui: ^2.20.0
   postcss: ^8.4.14
@@ -13,10 +15,12 @@ specifiers:
   vite-tsconfig-paths: ^3.5.0
 
 dependencies:
+  '@fortawesome/fontawesome-free': 6.1.2
   solid-app-router: 0.4.2_solid-js@1.4.7
   solid-js: 1.4.7
 
 devDependencies:
+  '@types/node': 18.6.3
   autoprefixer: 10.4.7_postcss@8.4.14
   daisyui: 2.20.0_ugi4xkrfysqkt4c4y6hkyfj344
   postcss: 8.4.14
@@ -339,6 +343,12 @@ packages:
     resolution: {integrity: sha512-RpfLEtTlyIxeNPGKcokS+p3BZII/Q3bYxryFRglh5H3A3T8q9fsLYm72VYAMEOOIBLEa8o93kFLiBDUWKrwXZA==}
     dev: true
 
+  /@fortawesome/fontawesome-free/6.1.2:
+    resolution: {integrity: sha512-XwWADtfdSN73/udaFm+1mnGIj/ShDZNFMe/PRoqv3FhQ4GNI2PUN70yFTPsjq65Lw2C9i4TG5/hTbxXIXVCiqQ==}
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dev: false
+
   /@jridgewell/gen-mapping/0.1.1:
     resolution: {integrity: sha512-sQXCasFk+U8lWYEe66WxRDOE9PjVz4vSM51fTu3Hw+ClTpUSQb718772vH3pyS5pShp6lvQM7SxgIDXXXmOX7w==}
     engines: {node: '>=6.0.0'}
@@ -396,6 +406,10 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
+    dev: true
+
+  /@types/node/18.6.3:
+    resolution: {integrity: sha512-6qKpDtoaYLM+5+AFChLhHermMQxc3TOEFIDzrZLPRGHPrLEwqFkkT5Kx3ju05g6X7uDPazz3jHbKPX0KzCjntg==}
     dev: true
 
   /acorn-node/1.8.2:
