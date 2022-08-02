@@ -1,8 +1,6 @@
 import { Route, Routes } from 'solid-app-router';
 import { Component } from 'solid-js';
-import { PageHome } from './pages/home/PageHome';
-import { PageAuth } from './pages/auth/PageAuth';
-import { PageNotFound } from './pages/not-found/PageNotFound';
+import { PageAuth, PageHome, PageNotFound } from '@app/pages';
 
 export const Routing: Component = () => {
   return (
