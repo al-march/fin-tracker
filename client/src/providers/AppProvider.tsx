@@ -55,6 +55,7 @@ export const AppProvider = (props: ParentProps) => {
   };
 
   const setUser = (user: UserDto) => {
+    appStorage.set('user', user);
     setState('user', user);
   };
 

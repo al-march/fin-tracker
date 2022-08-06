@@ -1,10 +1,12 @@
 import { Theme } from '@app/providers';
 import { AbstractStorage, StorageKeyEnum } from '@app/services/storage';
+import { UserDto } from '@app/dto';
 
 
 type AppStorageState = {
   theme: Theme;
   token: string;
+  user: UserDto | null;
 }
 
 class AppStorage extends AbstractStorage<AppStorageState> {}
