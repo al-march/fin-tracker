@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.1.2",
+    "@solsy/ui": "^0.0.7",
+    "rxjs": "^7.5.6",
     "solid-app-router": "^0.4.2",
     "solid-js": "^1.4.7"
   }
