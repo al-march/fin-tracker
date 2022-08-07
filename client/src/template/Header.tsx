@@ -1,4 +1,4 @@
-import { Component, createEffect, createSignal } from 'solid-js';
+import { Component, createEffect, createSignal, Show } from 'solid-js';
 import { Link } from 'solid-app-router';
 import { DrawerState, useApp } from '@app/providers';
 
@@ -35,9 +35,11 @@ export const Header: Component = () => {
       </div>
 
       <div class="flex-none">
-        <Link href="/auth" class="btn btn-ghost btn-sm normal-case text-sm">
-          Login
-        </Link>
+        <Show when={!app.state.user}>
+          <Link href="/auth" class="btn btn-ghost btn-sm normal-case text-sm">
+            Login
+          </Link>
+        </Show>
       </div>
     </header>
   );
