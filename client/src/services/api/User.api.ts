@@ -1,5 +1,5 @@
 import { ApiRoute, BaseApi } from '@app/services/api/base';
-import { SignInResDto } from '@app/dto';
+import { SignInResDto, UserDto } from '@app/models';
 
 @ApiRoute('auth')
 class AuthApi extends BaseApi {
@@ -10,7 +10,9 @@ class AuthApi extends BaseApi {
 
 @ApiRoute('profile')
 class ProfileApi extends BaseApi {
-
+  getInfo() {
+    return this.get<UserDto>('info');
+  }
 }
 
 export const authApi = new AuthApi();

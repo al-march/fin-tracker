@@ -65,12 +65,12 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "sum": 8903,
-  "description": "на удаление",
+  "sum": 890,
+  "description": "Перекресток",
   "category": {
     "id": 6
   },
-  "date": "2022-07-31T23:50:01.274Z"
+  "date": "2022-08-04T23:50:01.274Z"
 }
 
 ###
@@ -89,12 +89,12 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "sum": 890,
-  "description": "Еда в перекрестке",
+  "sum": 1820,
+  "description": "Выпил в токио",
   "category": {
     "id": 1
   },
-  "date": "2022-07-31T23:50:01.274Z"
+  "date": "2022-08-03T23:50:01.274Z"
 }
 
 ###
