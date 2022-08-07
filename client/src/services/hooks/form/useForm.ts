@@ -1,30 +1,43 @@
-import { batch, createSignal, observable, onCleanup, onMount } from 'solid-js';
+import { batch, createMemo, observable, onCleanup, onMount } from 'solid-js';
 import { distinctUntilChanged, map, Subject } from 'rxjs';
 import { createStore } from 'solid-js/store';
 import { Control } from '@app/services/hooks/form/models';
 
 type Controls = Record<string, any>;
 
-export const useForm = <Ctrl extends Controls>() => {
-  type Name = keyof Ctrl;
-  type Value = Ctrl[Name];
+export const useForm = <C extends Controls>() => {
+  type Name = keyof C;
+  type Value = C[Name];
 
-  let observer$: { unsubscribe(): void };
+  type FormState = {
+    values: Partial<C>;
+    errors: Partial<Record<Name, any>>;
+    isValid: boolean;
+  }
 
-  const valueChange$ = new Subject<Partial<Ctrl>>();
+  let onValuesChange$: { unsubscribe: () => void };
+  const valueChange$ = new Subject<Partial<C>>();
 
   const controls: Partial<Record<Name, Control>> = {};
-  const [errors, setErrors] = createStore<Partial<Record<Name, any>>>({});
-  const [values, setValue] = createSignal<Partial<Ctrl>>({});
+
+  const [state, setState] = createStore<FormState>({
+    values: {},
+    errors: {},
+    isValid: false,
+  });
+
+  const values = createMemo(() => ({...state.values}));
+  const isValid = createMemo(() => state.isValid);
 
   onMount(() => {
-    observer$ = observable(values).subscribe(values => {
-      valueChange$.next(values);
+    onValuesChange$ = observable(values).subscribe(data => {
+      checkIsValid();
+      valueChange$.next(data);
     });
   });
 
   onCleanup(() => {
-    observer$.unsubscribe();
+    onValuesChange$.unsubscribe();
     valueChange$.complete();
   });
 
@@ -32,14 +45,13 @@ export const useForm = <Ctrl extends Controls>() => {
     name: Name,
     validators: Array<(value: Value) => string | null | undefined> = []
   ) => {
-    const control = controls[name];
-    if (!control) {
-      controls[name] = new Control(name, validators);
-    }
+    initControl(name, validators);
+    const onInput = onInputHandler(name);
 
     return {
-      onInput: onInputHandler(name),
-      name
+      onInput,
+      name,
+      value: state.values[name]
     };
   };
 
@@ -53,8 +65,8 @@ export const useForm = <Ctrl extends Controls>() => {
         control.value = value;
         control.validate();
 
-        setValue(prev => ({...prev, [name]: value}));
-        setErrors(prev => ({...prev, [name]: control.error}));
+        setValueByName(name, value);
+        setErrorByControl(control);
       });
     };
   };
@@ -89,25 +101,71 @@ export const useForm = <Ctrl extends Controls>() => {
     );
   };
 
-  const handleSubmit = (cb: (ctrl: Partial<Ctrl>) => void) => {
-    Object.values(controls).forEach((control: Control) => {
-      control.touched = true;
-      control.validate();
-      setErrors(prev => ({...prev, [control.name]: control.error}))
+  const setError = (name: Name, message: string) => {
+    const c = controls[name];
+    c.setError(message);
+    setErrorByControl(c);
+    checkIsValid();
+  };
+
+  const setValue = (name: Name, value: any) => {
+    setState('values', values => ({...values, [name]: value}));
+  };
+
+  const handleSubmit = (onSubmit: (ctrl: Partial<C>) => void) => {
+    return (e?: Event) => {
+      if (e) {
+        e.preventDefault();
+      }
+
+      Object.values(controls).forEach((c: Control) => {
+        c.touched = true;
+        c.validate();
+        setErrorByControl(c);
+      });
+
+      checkIsValid();
+
+      if (state.isValid) {
+        onSubmit(values());
+      }
+    };
+  };
+
+  /* Private methods */
+  const setErrorByControl = (c: Control) => {
+    setState('errors', errors => ({...errors, [c.name]: c.error}));
+  };
+
+  const setValueByName = (name: Name, v: any) => {
+    setState('values', values => ({...values, [name]: v}));
+    Object.entries(state.values).forEach(([name, value]) => {
+      controls[name as Name].value = value;
     });
+    checkIsValid();
+  };
 
-    const isValid = Object.values(controls).every((c: Control) => c.valid);
-
-    if (isValid) {
-      cb(values());
+  const initControl = (name: Name, validators: Array<(value: Value) => string | null | undefined>) => {
+    const control = controls[name];
+    if (!control) {
+      controls[name] = new Control(name, validators);
+      controls[name].validate();
     }
+  };
+
+  const checkIsValid = () => {
+    const valid = Object.values(controls).every((c: Control) => c.valid);
+    setState('isValid', valid);
   };
 
   return {
     register,
-    errors,
+    errors: state.errors,
+    isValid,
+    setError,
     watch,
     watchFor,
+    setValue,
     handleSubmit
   };
 };

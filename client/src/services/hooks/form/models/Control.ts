@@ -17,11 +17,24 @@ export class Control {
   ) {
   }
 
+  setError(message: string) {
+    this.error = message;
+  }
+
+  setValue(value: any) {
+    this.value = value;
+  }
+
+  reset() {
+    this.setValue(null);
+    this.setError(null);
+  }
+
   validate() {
     for (const v of this.validators) {
       const error = v(this.value);
       if (error) {
-        this.error = error;
+        this.setError(error);
         return;
       }
     }
