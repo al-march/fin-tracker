@@ -15,17 +15,22 @@ const Required = (v: any) => v ? '' : 'Required field';
 export const PageAuth: Component = () => {
   const navigate = useNavigate();
   const app = useApp();
-  const {register, errors, handleSubmit} = useForm<Form>();
+  const {register, handleSubmit, errors, setError, setValue} = useForm<Form>();
 
   const onSubmit = async (form: Partial<Form>) => {
-    const res = await authApi.signIn(form.email, form.password);
-    const {user, token} = res.data;
-    app.setAuth(token);
-    app.setUser(user);
+    try {
+      const res = await authApi.signIn(form.email, form.password);
+      const {user, token} = res.data;
+      app.setAuth(token);
+      app.setUser(user);
 
-    navigate('/', {
-      replace: true
-    });
+      navigate('/', {
+        replace: true
+      });
+    } catch (e) {
+      setError('email', 'invalid email or password');
+      setValue('password', '');
+    }
   };
 
   return (
@@ -40,7 +45,7 @@ export const PageAuth: Component = () => {
           </p>
         </div>
         <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-          <div class="card-body">
+          <form class="card-body" onSubmit={handleSubmit(onSubmit)}>
             <FormField>
               <Input
                 placeholder="Email"
@@ -65,8 +70,8 @@ export const PageAuth: Component = () => {
               <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
             </label>
 
-            <Button color="primary" onClick={() => handleSubmit(onSubmit)}>Login</Button>
-          </div>
+            <Button color="primary" type="submit">Login</Button>
+          </form>
         </div>
       </div>
     </div>
