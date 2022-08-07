@@ -18,6 +18,7 @@ type createRequest struct {
 	Description string          `json:"description"`
 	Category    models.Category `json:"category"`
 	Date        time.Time       `json:"date"`
+	Profit      bool            `json:"profit"`
 }
 
 func (c Controller) Run() {
@@ -50,6 +51,7 @@ func (c Controller) create() {
 			Sum:         req.Sum,
 			Description: req.Description,
 			CategoryID:  req.Category.ID,
+			Profit:      req.Profit,
 			Date:        date,
 		}
 
@@ -121,6 +123,7 @@ func (c Controller) update() {
 		entity.Date = req.Date
 		entity.Description = req.Description
 		entity.Category = req.Category
+		entity.Profit = req.Profit
 		db.DB.Save(&entity)
 
 		var cat models.Category

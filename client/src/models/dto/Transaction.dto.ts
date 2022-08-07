@@ -6,6 +6,7 @@ export interface TransactionDto {
   date: string;
   description: string;
   sum: number;
+  profit: boolean;
 
   createdAt: string;
   updatedAt: string;
