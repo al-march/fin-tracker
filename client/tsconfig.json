@@ -15,7 +15,8 @@
       "@app/*": ["./src/*"],
       "@app/pages": ["./src/pages/index.ts"],
       "@app/template": ["./src/template/index.ts"],
-      "@app/models": ["./src/models/index.ts"]
+      "@app/models": ["./src/models/index.ts"],
+      "@app/components/*": ["./src/components/*"],
     }
   }
 }

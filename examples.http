@@ -65,13 +65,13 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "sum": 534,
-  "description": "Самокат",
+  "sum": 10000,
+  "description": "Билеты на самолет",
   "category": {
-    "id": 1
+    "id": 0
   },
-  "profit": true,
-  "date": "2022-08-06T23:50:01.274Z"
+  "profit": false,
+  "date": "2022-08-01T23:50:01.274Z"
 }
 
 ###
