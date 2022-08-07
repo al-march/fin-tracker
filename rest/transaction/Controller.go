@@ -71,8 +71,10 @@ func (c Controller) getAll() {
 		trans := make([]models.Transaction, 0)
 		db.DB.
 			Where("user_id=?", user.ID).
+			Order("date desc").
 			Preload("Category").
 			Find(&trans)
+
 		return ctx.JSON(trans)
 	})
 }
