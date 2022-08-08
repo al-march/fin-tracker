@@ -110,6 +110,10 @@ export const useForm = <C extends Controls>() => {
 
   const setValue = (name: Name, value: any) => {
     setState('values', values => ({...values, [name]: value}));
+
+    Promise.resolve().then(() => {
+      compareValuesAndControls();
+    });
   };
 
   const handleSubmit = (onSubmit: (ctrl: Partial<C>) => void) => {
@@ -139,10 +143,16 @@ export const useForm = <C extends Controls>() => {
 
   const setValueByName = (name: Name, v: any) => {
     setState('values', values => ({...values, [name]: v}));
+    Promise.resolve().then(() => {
+      compareValuesAndControls();
+      checkIsValid();
+    });
+  };
+
+  const compareValuesAndControls = () => {
     Object.entries(state.values).forEach(([name, value]) => {
       controls[name as Name].value = value;
     });
-    checkIsValid();
   };
 
   const initControl = (name: Name, validators: Array<(value: Value) => string | null | undefined>) => {
