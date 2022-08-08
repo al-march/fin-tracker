@@ -7,12 +7,16 @@ export abstract class BaseApi {
     return '';
   }
 
-  protected get<T>(path: string) {
+  protected get<T>(path: string = '') {
     return this.http.get<T>(this.getRoute(path));
   }
 
-  protected post<T>(path: string, data: any) {
+  protected post<T>(path: string = '', data: any) {
     return this.http.post<T>(this.getRoute(path), data);
+  }
+
+  protected put<T>(path: string = '', data: any) {
+    return this.http.put<T>(this.getRoute(path), data);
   }
 
   private getRoute(path: string = '') {

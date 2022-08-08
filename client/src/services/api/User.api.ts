@@ -13,6 +13,10 @@ class ProfileApi extends BaseApi {
   getInfo() {
     return this.get<UserDto>('info');
   }
+
+  update(u: Partial<UserDto>) {
+    return this.put<UserDto>('info', u);
+  }
 }
 
 export const authApi = new AuthApi();

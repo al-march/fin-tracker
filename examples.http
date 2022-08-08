@@ -35,6 +35,16 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 ###
+PUT http://127.0.0.1:8080/api/v1/profile/info
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "firstname": "alex",
+  "surname": "marc"
+}
+
+###
 PUT http://127.0.0.1:8080/api/v1/profile/settings
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}

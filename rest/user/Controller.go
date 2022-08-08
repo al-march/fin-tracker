@@ -26,6 +26,7 @@ func (c Controller) Run() {
 	c.signUp()
 	c.signIn()
 	c.info()
+	c.update()
 	// Settings
 	c.updateSettings()
 }
@@ -135,6 +136,28 @@ func (c Controller) info() {
 		user.Settings = settings
 
 		return ctx.JSON(user)
+	})
+}
+
+func (c Controller) update() {
+	c.Put("/info", func(ctx *fiber.Ctx) error {
+		user := auth.TakeUser(ctx)
+
+		var req models.User
+		if err := ctx.BodyParser(&req); err != nil {
+			err := rest.ErrorInvalidRequest
+			return ctx.Status(err.Status).JSON(err)
+		}
+
+		var entity models.User
+		db.DB.Where("id=?", user.ID).First(&entity)
+
+		entity.Firstname = req.Firstname
+		entity.Surname = req.Surname
+		entity.Email = req.Email
+		db.DB.Save(&entity)
+
+		return ctx.JSON(entity)
 	})
 }
 
