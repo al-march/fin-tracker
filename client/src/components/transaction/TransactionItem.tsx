@@ -1,20 +1,29 @@
 import { createMemo, ParentProps } from 'solid-js';
 import { TransactionDto } from '@app/models';
+import { Category } from '@app/services/mappers';
 import dayjs from 'dayjs';
 
 type Props = {
   transaction: TransactionDto;
+  categories: Map<number, Category>
 }
 
 export const TransactionItem = (props: ParentProps<Props>) => {
+  const icon = createMemo(() => {
+    const iconId = props.transaction.category.id;
+    return props.categories.get(iconId);
+  });
+
   return (
     <div class="card bg-base-200 p-3 w-full rounded">
       <div
         class="grid gap-2 items-center"
-        style="grid-template-columns: 50px 1fr auto"
+        style="grid-template-columns: 60px 1fr auto"
       >
 
-        <span>{props.transaction.category.name}</span>
+        <span class="flex flex-col items-center justify-center text-xl">
+          <i class={icon().icon}/>
+        </span>
 
         <div class="flex flex-col">
           <h5>{props.transaction.description}</h5>

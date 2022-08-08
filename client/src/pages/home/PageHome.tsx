@@ -1,15 +1,22 @@
-import { Component, createSignal, For, onMount } from 'solid-js';
-import { transactionsApi } from '@app/services/api';
+import { batch, Component, createSignal, For, onMount } from 'solid-js';
+import { categoryApi, transactionsApi } from '@app/services/api';
 import { TransactionDto } from '@app/models';
 import { TransactionItem } from '@app/components/transaction';
+import { Category } from '@app/services/mappers';
 
 export const PageHome: Component = () => {
 
+  const [cats, setCats] = createSignal<Map<number, Category>>(new Map<number, Category>());
   const [trans, setTrans] = createSignal<TransactionDto[]>([]);
 
   onMount(async () => {
+    const cats = await getCats();
     const trans = await getTrans();
-    setTrans(trans);
+
+    batch(() => {
+      setCats(cats);
+      setTrans(trans);
+    });
   });
 
   const getTrans = async () => {
@@ -17,7 +24,9 @@ export const PageHome: Component = () => {
     return res.data;
   };
 
-
+  const getCats = () => {
+    return categoryApi.getAll();
+  };
 
   return (
     <section class="p-2">
@@ -27,7 +36,8 @@ export const PageHome: Component = () => {
         <For each={trans()}>
           {tr => (
             <TransactionItem
-              transaction={tr}>
+              transaction={tr}
+              categories={cats()}>
             </TransactionItem>
           )}
         </For>

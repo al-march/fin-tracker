@@ -17,7 +17,7 @@ const App: Component = () => {
       <Header/>
 
       <Drawer>
-        <section class="overflow-hidden">
+        <section class="overflow-hidden overflow-y-scroll">
           <Routing/>
         </section>
       </Drawer>

@@ -35,14 +35,15 @@ func initCategories() {
 		{ID: 1, Name: "food"},
 		{ID: 2, Name: "transport"},
 		{ID: 3, Name: "home"},
-		{ID: 4, Name: "fan"},
+		{ID: 4, Name: "fun"},
 		{ID: 5, Name: "health"},
 		{ID: 6, Name: "rent"},
 		{ID: 7, Name: "subscription"},
 		{ID: 8, Name: "restaurant"},
+		{ID: 9, Name: "credit"},
 	}
 
 	for _, cat := range categories {
-		DB.FirstOrCreate(&cat)
+		DB.Save(&cat)
 	}
 }
