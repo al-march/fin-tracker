@@ -25,7 +25,7 @@ export const Header: Component = () => {
       <div class="flex-1">
         <button class="btn btn-ghost" onClick={toggleDrawer}>
           <i
-            classList={{'rotate-180': app.state.drawer === 'full'}}
+            classList={{'rotate-180': app.state.drawer === 'min'}}
             class="fa-solid fa-angle-left transition-transform"
           />
         </button>
