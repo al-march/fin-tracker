@@ -1,5 +1,5 @@
-import { batch, createSignal, For, onMount } from 'solid-js';
-import { TransactionItem } from '@app/components/transaction';
+import { batch, createMemo, createSignal, For, onMount } from 'solid-js';
+import { Sum, Transaction } from '@app/components/transaction';
 import { Category } from '@app/services/mappers';
 import { TransactionDto } from '@app/models';
 import { categoryApi, transactionsApi } from '@app/services/api';
@@ -7,6 +7,24 @@ import { categoryApi, transactionsApi } from '@app/services/api';
 export const PageDashboard = () => {
   const [cats, setCats] = createSignal<Map<number, Category>>(new Map<number, Category>());
   const [trans, setTrans] = createSignal<TransactionDto[]>([]);
+
+  const incomeSum = createMemo(() => {
+    return trans()
+      .filter(c => c.profit)
+      .reduce((acc, tr) => {
+        acc += tr.sum;
+        return acc;
+      }, 0);
+  });
+
+  const outcomeSum = createMemo(() => {
+    return trans()
+      .filter(c => !c.profit)
+      .reduce((acc, tr) => {
+        acc += tr.sum;
+        return acc;
+      }, 0);
+  });
 
   onMount(async () => {
     const cats = await getCats();
@@ -28,16 +46,25 @@ export const PageDashboard = () => {
   };
 
   return (
-    <section class="p-2">
-      <div class="flex flex-col gap-4 max-w-lg">
-        <h2 class="text-4xl">List of transactions</h2>
-        <span class="divider"></span>
+    <section class="p-4">
+      <div class="flex flex-col gap-4 max-w-lg mx-auto">
+        <h2 class="text-4xl py-4">List of transactions</h2>
+        <div class="flex justify-between">
+          <p class="flex flex-col items-start">
+            <span>Income:</span>
+            <Sum sum={incomeSum()} profit={true}/>
+          </p>
+          <p class="flex flex-col items-end">
+            <span>Outcome:</span>
+            <Sum sum={outcomeSum()} profit={false}/>
+          </p>
+        </div>
         <For each={trans()}>
           {tr => (
-            <TransactionItem
+            <Transaction
               transaction={tr}
               categories={cats()}>
-            </TransactionItem>
+            </Transaction>
           )}
         </For>
       </div>

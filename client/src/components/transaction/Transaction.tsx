@@ -2,13 +2,14 @@ import { createMemo, ParentProps } from 'solid-js';
 import { TransactionDto } from '@app/models';
 import { Category } from '@app/services/mappers';
 import dayjs from 'dayjs';
+import { Sum } from './Sum';
 
 type Props = {
   transaction: TransactionDto;
   categories: Map<number, Category>
 }
 
-export const TransactionItem = (props: ParentProps<Props>) => {
+export const Transaction = (props: ParentProps<Props>) => {
   const icon = createMemo(() => {
     const iconId = props.transaction.category.id;
     return props.categories.get(iconId);
@@ -33,44 +34,12 @@ export const TransactionItem = (props: ParentProps<Props>) => {
           />
         </div>
 
-        <Sum tr={props.transaction}/>
+        <Sum
+          sum={props.transaction.sum}
+          profit={props.transaction.profit}
+        />
       </div>
     </div>
-  );
-};
-
-type SumProps = {
-  tr: TransactionDto;
-}
-
-export const Sum = (props: ParentProps<SumProps>) => {
-
-  const formatSumNumber = createMemo(() => {
-    const sum = props.tr.sum.toString();
-
-    if (sum.length <= 4) {
-      return sum;
-    }
-
-    const output = sum.split('').reverse();
-    for (let i = 3; i < output.length; i += 3) {
-      output[i] = output[i] + ' ';
-    }
-
-    return output.reverse().join('');
-  });
-
-  const formatSum = createMemo(() => {
-    return `${props.tr.profit ? '+' : '-'}${formatSumNumber()} ₽`;
-  });
-
-  return (
-    <span classList={{
-      'text-success': props.tr.profit,
-      'text-error': !props.tr.profit,
-    }}>
-      {formatSum()}
-    </span>
   );
 };
 
