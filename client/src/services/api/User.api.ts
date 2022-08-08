@@ -1,5 +1,5 @@
 import { ApiRoute, BaseApi } from '@app/services/api/base';
-import { SignInResDto, UserDto } from '@app/models';
+import { SignInResDto, UserDto, UserSettingsDto } from '@app/models';
 
 @ApiRoute('auth')
 class AuthApi extends BaseApi {
@@ -16,6 +16,10 @@ class ProfileApi extends BaseApi {
 
   update(u: Partial<UserDto>) {
     return this.put<UserDto>('info', u);
+  }
+
+  updateSettings(dto: UserSettingsDto) {
+    return this.put<UserSettingsDto>('settings', dto);
   }
 }
 

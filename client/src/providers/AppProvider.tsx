@@ -1,7 +1,7 @@
-import { UserDto } from '@app/dto';
 import { createStore, Store } from 'solid-js/store';
 import { createContext, ParentProps, useContext } from 'solid-js';
 import { appStorage } from '@app/services/storage';
+import { UserDto } from '@app/models';
 
 export type Theme = 'light' | 'business';
 export type DrawerState = 'full' | 'min';
