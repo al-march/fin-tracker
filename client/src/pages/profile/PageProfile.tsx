@@ -2,6 +2,7 @@ import { createSignal, onMount } from 'solid-js';
 import { UserDto } from '@app/models';
 import { profileApi } from '@app/services/api';
 import { useApp } from '@app/providers';
+import { Tab, Tabs } from '@solsy/ui';
 
 import { ProfileForm, ProfileFormControls, SettingsForm, SettingsFormControls } from './components';
 
@@ -30,24 +31,32 @@ export const PageProfile = () => {
 
   return (
     <section class="p-2">
-      <div class="grid md:grid-cols-2 gap-2">
-        <div class="flex flex-col gap-4 max-w-lg">
-          <h2 class="text-4xl py-4">Profile</h2>
+      <div class="grid">
 
-          <ProfileForm
-            user={user()}
-            onSubmit={onProfileSubmit}
-          />
-        </div>
+        <Tabs view="boxed">
+          <Tab label="Profile">
+            <div class="flex flex-col gap-4 max-w-lg">
+              <h2 class="text-4xl py-4">Profile</h2>
 
-        <div class="flex flex-col gap-4 max-w-lg">
-          <h2 class="text-4xl py-4">Settings</h2>
+              <ProfileForm
+                user={user()}
+                onSubmit={onProfileSubmit}
+              />
+            </div>
+          </Tab>
 
-          <SettingsForm
-            user={user()}
-            onSubmit={onSettingsSubmit}
-          />
-        </div>
+          <Tab label="Settings">
+            <div class="flex flex-col gap-4 max-w-lg">
+              <h2 class="text-4xl py-4">Settings</h2>
+
+              <SettingsForm
+                user={user()}
+                onSubmit={onSettingsSubmit}
+              />
+            </div>
+          </Tab>
+        </Tabs>
+
       </div>
     </section>
   );
