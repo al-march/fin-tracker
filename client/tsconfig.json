@@ -17,6 +17,7 @@
       "@app/template": ["./src/template/index.ts"],
       "@app/models": ["./src/models/index.ts"],
       "@app/components/*": ["./src/components/*"],
+      "@app/transitions": ["./src/components/utils/transitions/index.ts"],
     }
   }
 }
