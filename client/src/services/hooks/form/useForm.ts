@@ -164,7 +164,10 @@ export const useForm = <C extends Controls>() => {
   };
 
   const checkIsValid = () => {
-    const valid = Object.values(controls).every((c: Control) => c.valid);
+    const valid = Object.values(controls).every((c: Control) => {
+      c.validate();
+      return c.valid;
+    });
     setState('isValid', valid);
   };
 
