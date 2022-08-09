@@ -124,14 +124,17 @@ func (c Controller) update() {
 		entity.Sum = req.Sum
 		entity.Date = req.Date
 		entity.Description = req.Description
-		entity.Category = req.Category
 		entity.Profit = req.Profit
+
+		cat, err := findCategory(req.Category.ID)
+		if err != nil {
+			// Todo: исправить хардкодное применение категории "Другое"
+			entity.Category = models.Category{ID: 10}
+		} else {
+			entity.Category = cat
+		}
+
 		db.DB.Save(&entity)
-
-		var cat models.Category
-		db.DB.Where("id=?", req.Category.ID).First(&cat)
-		entity.Category = cat
-
 		return ctx.JSON(entity)
 	})
 }
@@ -154,4 +157,15 @@ func (c Controller) delete() {
 		db.DB.Delete(&entity)
 		return ctx.SendStatus(fiber.StatusOK)
 	})
+}
+
+func findCategory(id uint) (models.Category, error) {
+	var cat models.Category
+	err := db.DB.
+		Where("id=?", id).
+		Model(models.Category{}).
+		First(&cat).
+		Error
+
+	return cat, err
 }
