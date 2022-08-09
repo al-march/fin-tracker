@@ -58,14 +58,11 @@ export const EditForm = (props: ParentProps<Props>) => {
     >
       <i/>
       <div>
-        <div
-          class="grid items-center gap-2"
-          style="grid-template-columns: 1fr 120px"
-        >
+        <div class="grid md:grid-cols-2 items-center md:gap-2">
           <FormField>
             <label class="text-sm opacity-75 pb-1">Description</label>
             <Input
-              class="w-full"
+              class="flex-1"
               bordered
               size="sm"
               {...register('description', [Required()])}
@@ -77,6 +74,7 @@ export const EditForm = (props: ParentProps<Props>) => {
           <FormField>
             <label class="text-sm opacity-75 pb-1">Sum</label>
             <Input
+              class="flex-1"
               bordered
               size="sm"
               {...register('sum', [Required(), OnlyNumber()])}
