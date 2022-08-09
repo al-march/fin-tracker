@@ -70,8 +70,9 @@ export const AppProvider = (props: ParentProps) => {
     setState('headerHeight', value);
   };
 
-  const setDrawer = (state: DrawerState) => {
-    setState('drawer', state);
+  const setDrawer = (state?: DrawerState) => {
+    setState('drawer', state || 'full');
+    appStorage.set('drawer', state || 'full');
   };
 
   return (

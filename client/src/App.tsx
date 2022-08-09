@@ -31,9 +31,11 @@ function initApp() {
 
   const token = appStorage.get('token');
   const user = appStorage.get('user');
+  const drawer = appStorage.get('drawer');
 
   app.setAuth(token);
   app.setUser(user);
+  app.setDrawer(drawer);
 
   if (!token) {
     navigate('/auth');
