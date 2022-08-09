@@ -30,8 +30,9 @@ export const PageProfile = () => {
   };
 
   return (
-    <section class="p-2">
-      <div class="grid">
+    <section class="p-4">
+      <div class="grid max-w-lg mx-auto">
+        <h2 class="text-4xl py-4">Profile Settings</h2>
 
         <Tabs view="boxed">
           <Tab label="Profile">
