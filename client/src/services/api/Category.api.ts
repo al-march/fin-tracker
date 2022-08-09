@@ -4,7 +4,7 @@ import { Category } from '@app/services/mappers';
 
 const defaultCat: CategoryDto = {
   id: 0,
-  name: ''
+  name: 'other'
 };
 
 @ApiRoute('category')

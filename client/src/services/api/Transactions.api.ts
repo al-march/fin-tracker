@@ -4,7 +4,11 @@ import { TransactionDto } from '@app/models';
 @ApiRoute('transaction')
 export class TransactionsApi extends BaseApi {
   getAll() {
-    return this.get<TransactionDto[]>('');
+    return this.get<TransactionDto[]>();
+  }
+
+  update(dto: TransactionDto) {
+    return this.put<TransactionDto>(dto.id, dto);
   }
 }
 
