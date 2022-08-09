@@ -5,7 +5,7 @@ import { Category } from '@app/services/mappers';
 
 type Props = {
   id: number;
-  onInput?: (category: Category) => void;
+  onCategoryChange?: (category: Category) => void;
 } & SelectProps;
 
 export const CategorySelect = (props: ParentProps<Props>) => {
@@ -34,16 +34,18 @@ export const CategorySelect = (props: ParentProps<Props>) => {
   };
 
   const onInput = (id: number | string) => {
+    props.onInput?.(id);
+
     const cat = catsMap().get(Number(id));
     if (cat) {
-      props.onInput?.(cat);
+      props.onCategoryChange?.(cat);
     }
   };
 
   return (
     <Select
       {...props}
-      value={props.id}
+      value={props.id + ''}
       customValue={customView}
       onInput={onInput}
     >
