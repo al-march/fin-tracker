@@ -113,6 +113,7 @@ export const useForm = <C extends Controls>() => {
 
     Promise.resolve().then(() => {
       compareValuesAndControls();
+      checkIsValid();
     });
   };
 
