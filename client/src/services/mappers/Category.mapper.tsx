@@ -32,3 +32,5 @@ export class Category implements CategoryDto {
     }
   }
 }
+
+export type CategoriesMap = Map<number, Category>;

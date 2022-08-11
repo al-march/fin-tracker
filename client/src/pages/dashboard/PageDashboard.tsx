@@ -1,50 +1,48 @@
-import { batch, createMemo, createSignal, For, onMount } from 'solid-js';
-import { Sum, Transaction } from '@app/components/transaction';
-import { Category } from '@app/services/mappers';
-import { TransactionCreateDto, TransactionDto } from '@app/models';
+import { TransactionList } from './components/TransactionList';
+import { batch, onMount } from 'solid-js';
 import { categoryApi, transactionsApi } from '@app/services/api';
-import { AddNewTrForm } from '@app/pages/dashboard/components/NewTransactionForm';
+import { createStore } from 'solid-js/store';
+import { CategoriesMap, Category } from '@app/services/mappers';
+import { TransactionCreateDto, TransactionDto } from '@app/models';
 import dayjs from 'dayjs';
 
+interface DashboardState {
+  categories: CategoriesMap;
+  transactions: TransactionDto[];
+}
+
 export const PageDashboard = () => {
-  const [cats, setCats] = createSignal<Map<number, Category>>(new Map<number, Category>());
-  const [trans, setTrans] = createSignal<TransactionDto[]>([]);
 
-  const incomeSum = createMemo(() => {
-    return trans()
-      .filter(c => c.profit)
-      .reduce((acc, tr) => {
-        acc += tr.sum;
-        return acc;
-      }, 0);
-  });
-
-  const outcomeSum = createMemo(() => {
-    return trans()
-      .filter(c => !c.profit)
-      .reduce((acc, tr) => {
-        acc += tr.sum;
-        return acc;
-      }, 0);
+  const [state, setState] = createStore<DashboardState>({
+    categories: new Map<number, Category>(),
+    transactions: [],
   });
 
   onMount(async () => {
-    const cats = await getCats();
-    const trans = await getTrans();
+    const categories = await getCategories();
+    const transactions = await getTransactions();
 
     batch(() => {
-      setCats(cats);
-      setTrans(trans);
+      setCategories(categories);
+      setTransactions(transactions);
     });
   });
 
-  const getTrans = async () => {
+  const getTransactions = async () => {
     const res = await transactionsApi.getAll();
     return res.data;
   };
 
-  const getCats = () => {
+  const getCategories = () => {
     return categoryApi.getAll();
+  };
+
+  const setCategories = (categories: CategoriesMap) => {
+    setState('categories', categories);
+  };
+
+  const setTransactions = (transactions: TransactionDto[]) => {
+    setState('transactions', transactions);
   };
 
   const createTransaction = async (dto: TransactionDto) => {
@@ -57,34 +55,18 @@ export const PageDashboard = () => {
     };
 
     const res = await transactionsApi.create(createDto);
-    setTrans((trs) => [res.data, ...trs]);
+    const transactions = [res.data, ...state.transactions];
+    setTransactions(transactions);
   };
 
   return (
     <section class="p-4">
-      <div class="flex flex-col gap-4 max-w-lg mx-auto">
-        <h2 class="text-4xl py-4">List of transactions</h2>
-        <div class="flex justify-between">
-          <p class="flex flex-col items-start">
-            <span>Income:</span>
-            <Sum sum={incomeSum()} profit={true}/>
-          </p>
-          <p class="flex flex-col items-end">
-            <span>Outcome:</span>
-            <Sum sum={outcomeSum()} profit={false}/>
-          </p>
-        </div>
-
-        <AddNewTrForm onCreate={createTransaction}/>
-
-        <For each={trans()}>
-          {tr => (
-            <Transaction
-              transaction={tr}
-              categories={cats()}>
-            </Transaction>
-          )}
-        </For>
+      <div class="grid grid-cols-3">
+        <TransactionList
+          transactions={state.transactions}
+          categories={state.categories}
+          onCreate={createTransaction}
+        />
       </div>
     </section>
   );
