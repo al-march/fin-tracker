@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, on, ParentProps } from 'solid-js';
+import { createMemo, createSignal, onMount, ParentProps } from 'solid-js';
 import { CategoryDto, TransactionDto } from '@app/models';
 import { Button, FormError, FormField, Input, Toggle } from '@solsy/ui';
 import { OnlyNumber, Required, useForm } from '@app/services/hooks/form';
@@ -21,18 +21,16 @@ export const EditForm = (props: ParentProps<Props>) => {
   const [editedDto, setDto] = createSignal<TransactionDto>(props.tr);
   const {register, setValue, errors, watch, isValid, handleSubmit} = useForm<Controls>();
 
-  const tr = createMemo(() => props.tr);
+  const tr = createMemo(() => editedDto());
 
-  createEffect(on(tr, (tr) => {
-    if (tr) {
-      setValue('description', tr.description);
-      setValue('sum', tr.sum);
-      setValue('profit', tr.profit);
-    }
-  }));
+  onMount(() => {
+    setValue('description', tr().description);
+    setValue('sum', tr().sum);
+    setValue('profit', tr().profit);
+  });
 
   watch().subscribe(form => {
-    const dto = Object.assign(tr(), form);
+    const dto = Object.assign({...editedDto()}, form);
     if (isValid()) {
       dto.sum = Number(dto.sum);
       setDto(dto);

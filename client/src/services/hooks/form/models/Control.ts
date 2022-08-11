@@ -13,7 +13,8 @@ export class Control {
 
   constructor(
     public name: string | number | symbol,
-    public validators: Array<(value: any) => string | null | undefined> = []
+    public validators: Array<(value: any) => string | null | undefined> = [],
+    public ref: HTMLInputElement,
   ) {
   }
 

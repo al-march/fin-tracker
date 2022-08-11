@@ -1,5 +1,5 @@
-import { batch, createMemo, observable, onCleanup, onMount } from 'solid-js';
-import { distinctUntilChanged, map, Subject } from 'rxjs';
+import { batch, createMemo, onCleanup, onMount } from 'solid-js';
+import { distinctUntilChanged, map, Subject, Subscription } from 'rxjs';
 import { createStore } from 'solid-js/store';
 import { Control } from '@app/services/hooks/form/models';
 
@@ -15,7 +15,7 @@ export const useForm = <C extends Controls>() => {
     isValid: boolean;
   }
 
-  let onValuesChange$: { unsubscribe: () => void };
+  let onValuesChange$: Subscription;
   const valueChange$ = new Subject<Partial<C>>();
 
   const controls: Partial<Record<Name, Control>> = {};
@@ -26,13 +26,11 @@ export const useForm = <C extends Controls>() => {
     isValid: false,
   });
 
-  const values = createMemo(() => ({...state.values}));
   const isValid = createMemo(() => state.isValid);
 
   onMount(() => {
-    onValuesChange$ = observable(values).subscribe(data => {
+    onValuesChange$ = valueChange$.subscribe(() => {
       checkIsValid();
-      valueChange$.next(data);
     });
   });
 
@@ -45,13 +43,14 @@ export const useForm = <C extends Controls>() => {
     name: Name,
     validators: Array<(value: Value) => string | null | undefined> = []
   ) => {
-    initControl(name, validators);
     const onInput = onInputHandler(name);
 
     return {
+      ref(r: HTMLInputElement) {
+        initControl(name, validators, r);
+      },
       onInput,
       name,
-      value: state.values[name]
     };
   };
 
@@ -67,6 +66,8 @@ export const useForm = <C extends Controls>() => {
 
         setValueByName(name, value);
         setErrorByControl(control);
+
+        setTimeout(() => compareValuesAndControls());
       });
     };
   };
@@ -85,6 +86,18 @@ export const useForm = <C extends Controls>() => {
         return input.checked as Value;
       default:
         return input.value as Value;
+    }
+  };
+
+  const setInputValue = (name: Name, value: Value) => {
+    const control = controls[name];
+    const ref = control.ref;
+    switch (ref.type) {
+      case 'checkbox':
+        ref.checked = value;
+        break;
+      default:
+        return ref.value = value;
     }
   };
 
@@ -111,8 +124,8 @@ export const useForm = <C extends Controls>() => {
   const setValue = (name: Name, value: any) => {
     setState('values', values => ({...values, [name]: value}));
 
-    Promise.resolve().then(() => {
-      compareValuesAndControls();
+    setTimeout(() => {
+      setInputValue(name, value);
       checkIsValid();
     });
   };
@@ -123,6 +136,7 @@ export const useForm = <C extends Controls>() => {
         e.preventDefault();
       }
 
+      compareValuesAndControls();
       Object.values(controls).forEach((c: Control) => {
         c.touched = true;
         c.validate();
@@ -132,34 +146,40 @@ export const useForm = <C extends Controls>() => {
       checkIsValid();
 
       if (state.isValid) {
-        onSubmit(values());
+        onSubmit({...state.values});
       }
     };
   };
 
   /* Private methods */
+  const emitChanges = () => {
+    valueChange$.next({...state.values});
+  };
+
   const setErrorByControl = (c: Control) => {
     setState('errors', errors => ({...errors, [c.name]: c.error}));
   };
 
   const setValueByName = (name: Name, v: any) => {
     setState('values', values => ({...values, [name]: v}));
-    Promise.resolve().then(() => {
+
+    setTimeout(() => {
       compareValuesAndControls();
       checkIsValid();
+      emitChanges();
     });
   };
 
   const compareValuesAndControls = () => {
     Object.entries(state.values).forEach(([name, value]) => {
-      controls[name as Name].value = value;
+      controls[name as Name].setValue(value);
     });
   };
 
-  const initControl = (name: Name, validators: Array<(value: Value) => string | null | undefined>) => {
+  const initControl = (name: Name, validators: Array<(value: Value) => string | null | undefined>, ref: HTMLInputElement) => {
     const control = controls[name];
     if (!control) {
-      controls[name] = new Control(name, validators);
+      controls[name] = new Control(name, validators, ref);
       controls[name].validate();
     }
   };
