@@ -8,6 +8,7 @@ type Props = {
   transactions?: TransactionDto[];
   categories?: CategoriesMap;
   onCreate?: (dto: TransactionDto) => void;
+  onUpdate?: (dto: TransactionDto) => void;
 }
 
 export const TransactionList = (props: ParentProps<Props>) => {
@@ -42,8 +43,7 @@ export const TransactionList = (props: ParentProps<Props>) => {
   };
 
   return (
-    <div class="flex flex-col gap-4">
-      <h2 class="text-4xl py-4">List of transactions</h2>
+    <div class="flex flex-col gap-2">
       <div class="flex justify-between">
         <p class="flex flex-col items-start">
           <span>Income:</span>
@@ -63,7 +63,8 @@ export const TransactionList = (props: ParentProps<Props>) => {
         {tr => (
           <Transaction
             transaction={tr}
-            categories={categories()}>
+            categories={categories()}
+            onUpdate={props.onUpdate}>
           </Transaction>
         )}
       </For>

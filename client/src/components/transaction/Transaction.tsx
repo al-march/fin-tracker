@@ -5,12 +5,13 @@ import dayjs from 'dayjs';
 import { Sum } from './Sum';
 import { Button } from '@solsy/ui';
 import { ExpandPanel } from './ExpandPanel';
-import { transactionsApi } from '@app/services/api';
 
 type Props = {
   transaction: TransactionDto;
   categories: Map<number, Category>;
   expand?: boolean;
+
+  onUpdate?: (dto: TransactionDto) => void;
 }
 
 export const Transaction = (props: ParentProps<Props>) => {
@@ -30,10 +31,9 @@ export const Transaction = (props: ParentProps<Props>) => {
     setTr({...dto});
   };
 
-  const onUpdateDto = async (dto: TransactionDto) => {
-    const res = await transactionsApi.update(dto);
-    console.log(res);
-  }
+  const onUpdateDto = (dto: TransactionDto) => {
+    props.onUpdate?.(dto);
+  };
 
   return (
     <div class="card bg-base-200 p-3 w-full rounded">
