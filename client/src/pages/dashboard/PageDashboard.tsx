@@ -1,8 +1,10 @@
 import { batch, createMemo, createSignal, For, onMount } from 'solid-js';
 import { Sum, Transaction } from '@app/components/transaction';
 import { Category } from '@app/services/mappers';
-import { TransactionDto } from '@app/models';
+import { TransactionCreateDto, TransactionDto } from '@app/models';
 import { categoryApi, transactionsApi } from '@app/services/api';
+import { AddNewTrForm } from '@app/pages/dashboard/components/NewTransactionForm';
+import dayjs from 'dayjs';
 
 export const PageDashboard = () => {
   const [cats, setCats] = createSignal<Map<number, Category>>(new Map<number, Category>());
@@ -45,6 +47,19 @@ export const PageDashboard = () => {
     return categoryApi.getAll();
   };
 
+  const createTransaction = async (dto: TransactionDto) => {
+    const createDto: TransactionCreateDto = {
+      date: dayjs().toJSON(),
+      description: dto.description,
+      category: dto.category,
+      profit: dto.profit,
+      sum: dto.sum
+    };
+
+    const res = await transactionsApi.create(createDto);
+    setTrans((trs) => [res.data, ...trs]);
+  };
+
   return (
     <section class="p-4">
       <div class="flex flex-col gap-4 max-w-lg mx-auto">
@@ -59,6 +74,9 @@ export const PageDashboard = () => {
             <Sum sum={outcomeSum()} profit={false}/>
           </p>
         </div>
+
+        <AddNewTrForm onCreate={createTransaction}/>
+
         <For each={trans()}>
           {tr => (
             <Transaction

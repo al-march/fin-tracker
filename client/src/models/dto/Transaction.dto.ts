@@ -11,3 +11,10 @@ export interface TransactionDto {
   createdAt: string;
   updatedAt: string;
 }
+
+export type TransactionCreateDto = Pick<TransactionDto,
+  'profit'
+  | 'description'
+  | 'sum'
+  | 'date'
+  | 'category'>

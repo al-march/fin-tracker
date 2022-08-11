@@ -9,11 +9,12 @@ import { transactionsApi } from '@app/services/api';
 
 type Props = {
   transaction: TransactionDto;
-  categories: Map<number, Category>
+  categories: Map<number, Category>;
+  expand?: boolean;
 }
 
 export const Transaction = (props: ParentProps<Props>) => {
-  const [expand, setExpand] = createSignal(false);
+  const [expand, setExpand] = createSignal(!!props.expand);
   const [tr, setTr] = createSignal(props.transaction);
 
   const icon = createMemo(() => {

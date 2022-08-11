@@ -33,21 +33,21 @@ export const EditForm = (props: ParentProps<Props>) => {
 
   watch().subscribe(form => {
     const dto = Object.assign(tr(), form);
-    if (isValid() && props.onChange) {
+    if (isValid()) {
       dto.sum = Number(dto.sum);
       setDto(dto);
-      props.onChange(editedDto());
+      props.onChange?.(editedDto());
     }
   });
 
   const onSave = () => {
-    props.onSubmit(editedDto());
+    props.onSubmit?.(editedDto());
   };
 
   const catChange = (cat: Category) => {
     const category: CategoryDto = {id: cat.id, name: cat.name};
     setDto({...editedDto(), category});
-    props.onChange(editedDto());
+    props.onChange?.(editedDto());
   };
 
   return (
