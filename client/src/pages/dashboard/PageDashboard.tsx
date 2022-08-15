@@ -6,6 +6,7 @@ import { TransactionCreateDto, TransactionDto } from '@app/models';
 import dayjs from 'dayjs';
 import { TransactionList } from './components/TransactionList';
 import { TransactionChart } from './components/TransactionChart';
+import { Tab, Tabs } from '@solsy/ui';
 
 interface DashboardState {
   categories: CategoriesMap;
@@ -71,24 +72,26 @@ export const PageDashboard = () => {
   };
 
   return (
-    <section class="p-4 h-full overflow-hidden flex flex-col">
-      <h2 class="text-4xl py-4">List of transactions</h2>
-      <div class="grid grid-cols-12 gap-8 flex-1 overflow-hidden">
-        <div class="col-start-1 col-end-6 flex flex-col overflow-y-scroll">
-          <TransactionList
-            transactions={state.transactions}
-            categories={state.categories}
-            onCreate={createTransaction}
-            onUpdate={updateTransaction}
-          />
-        </div>
-
-        <div class="col-start-6 col-end-12 pb-8">
-          <TransactionChart
-            transactions={state.transactions}
-          />
-        </div>
-      </div>
+    <section class="p-4 h-full max-w-xl mx-auto  grid" style="grid-template-rows: auto 1fr">
+      <Tabs view="boxed">
+        <Tab label="Transactions">
+          <div class="flex flex-col w-full overflow-y-scroll">
+            <TransactionList
+              transactions={state.transactions}
+              categories={state.categories}
+              onCreate={createTransaction}
+              onUpdate={updateTransaction}
+            />
+          </div>
+        </Tab>
+        <Tab label="Charts">
+          <div class="flex flex-col w-full overflow-y-scroll">
+            <TransactionChart
+              transactions={state.transactions}
+            />
+          </div>
+        </Tab>
+      </Tabs>
     </section>
   );
 };
